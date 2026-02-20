@@ -12,7 +12,7 @@ WEBHOOK_URL = 'https://grishavpn.onrender.com'
 
 ADMIN_ID = 7769226977
 CHANNEL_ID = -1003423217810
-CHANNEL_USERNAME = "@YouVPNs" # Для отображения в тексте
+CHANNEL_USERNAME = "@grishavpn" # Для отображения в тексте
 
 bot = telebot.TeleBot(BOT_TOKEN)
 app = Flask(__name__)
@@ -29,10 +29,33 @@ APPS_LINKS = {
 }
 
 FLAGS_TO_RUS = {
+    # Ваш исходный список
     "🇳🇱": "Нидерланды", "🇺🇸": "США", "🇩🇪": "Германия", "🇬🇧": "Великобритания",
     "🇫🇷": "Франция", "🇹🇷": "Турция", "🇷🇺": "Россия", "🇺🇦": "Украина",
     "🇵🇱": "Польша", "🇫🇮": "Финляндия", "🇸🇪": "Швеция", "🇨🇦": "Канада",
-    "🇯🇵": "Япония", "🇰🇿": "Казахстан", "🇪🇪": "Эстония"
+    "🇯🇵": "Япония", "🇰🇿": "Казахстан", "🇪🇪": "Эстония",
+
+    # Европа
+    "🇦🇹": "Австрия", "🇧🇪": "Бельгия", "🇧🇬": "Болгария", "🇨🇭": "Швейцария",
+    "🇨🇿": "Чехия", "🇩🇰": "Дания", "🇪🇸": "Испания", "🇬🇷": "Греция",
+    "🇭🇷": "Хорватия", "🇭🇺": "Венгрия", "🇮🇪": "Ирландия", "🇮🇸": "Исландия",
+    "🇮🇹": "Италия", "🇱🇹": "Литва", "🇱🇻": "Латвия", "🇲🇩": "Молдавия",
+    "🇳🇴": "Норвегия", "🇵🇹": "Португалия", "🇷🇴": "Румыния", "🇷🇸": "Сербия",
+    "🇸🇮": "Словения", "🇸🇰": "Словакия",
+
+    # Азия и Океания
+    "🇦🇪": "ОАЭ", "🇦🇲": "Армения", "🇦🇿": "Азербайджан", "🇨🇳": "Китай",
+    "🇬🇪": "Грузия", "🇮🇩": "Индонезия", "🇮🇱": "Израиль", "🇮🇳": "Индия",
+    "🇰🇬": "Киргизия", "🇰🇷": "Южная Корея", "🇲🇾": "Малайзия", "🇸🇬": "Сингапур",
+    "🇹🇭": "Таиланд", "🇺🇿": "Узбекистан", "🇻🇳": "Вьетнам", "🇦🇺": "Австралия",
+    "🇳🇿": "Новая Зеландия",
+
+    # Америка
+    "🇦🇷": "Аргентина", "🇧🇷": "Бразилия", "🇨🇱": "Чили", "🇨🇴": "Колумбия",
+    "🇲🇽": "Мексика", "🇵🇪": "Перу",
+
+    # Африка
+    "🇪🇬": "Египет", "🇲🇦": "Марокко", "🇳🇬": "Нигерия", "🇿🇦": "ЮАР"
 }
 
 # --- WEBHOOK SERVER ---
@@ -57,7 +80,7 @@ def is_admin(user_id):
 @bot.message_handler(commands=['start'])
 def start(message):
     if not is_admin(message.from_user.id): return
-    bot.send_message(message.chat.id, "👋 Привет! Жду конфиг (текст) или файл (.npvt).")
+    bot.send_message(message.chat.id, "👋 Привет! Кидай код")
     user_data[message.chat.id] = {}
 
 # 1. Прием кода/файла
@@ -73,6 +96,11 @@ def handle_input(message):
     if message.document:
         if message.document.file_name.endswith('.npvt'):
             app_detected = "Npv Tunnel"
+            user_data[message.chat.id]['is_file'] = True
+            user_data[message.chat.id]['file_id'] = message.document.file_id
+            user_data[message.chat.id]['filename'] = message.document.file_name
+        elif message.document.file_name.endswith('.dark'):
+            app_detected = "DarkTunnel"
             user_data[message.chat.id]['is_file'] = True
             user_data[message.chat.id]['file_id'] = message.document.file_id
             user_data[message.chat.id]['filename'] = message.document.file_name
@@ -114,11 +142,11 @@ def ask_quality(message):
 def save_quality(message):
     text = message.text
     if "Апупенный" in text:
-        q_text, q_emoji = "Отличная", "🚀"
+        q_text, q_emoji = "Премиальная", "🚀"
     elif "Средний" in text:
         q_text, q_emoji = "Средняя", "⚖️"
     elif "Плохой" in text:
-        q_text, q_emoji = "Низкая", "🐢"
+        q_text, q_emoji = "Ужастная", "🐢"
     else:
         q_text, q_emoji = "Неизвестно", "❓"
         
@@ -129,7 +157,7 @@ def save_quality(message):
 
 # 4. Лимит или Дата
 def ask_limit(message):
-    msg = bot.send_message(message.chat.id, "Введи лимит (напр. '50GB') ИЛИ дату (напр. '12.03.26'). Если хз, пиши '?'.", reply_markup=types.ReplyKeyboardRemove())
+    msg = bot.send_message(message.chat.id, "Введи лимит: ", reply_markup=types.ReplyKeyboardRemove())
     bot.register_next_step_handler(msg, save_limit)
 
 def save_limit(message):
@@ -145,7 +173,7 @@ def save_limit(message):
         
     user_data[message.chat.id]['limit_str'] = limit_str
     
-    msg = bot.send_message(message.chat.id, "Кидай флаг страны (один эмодзи):")
+    msg = bot.send_message(message.chat.id, "Кидай флаг страны:")
     bot.register_next_step_handler(msg, finish_post)
 
 # 5. Публикация
@@ -186,4 +214,5 @@ if __name__ == "__main__":
     # этот код для запуска на сервере через Gunicorn
 
     app.run(host="0.0.0.0", port=int(os.environ.get("PORT", 5000)))
+
 
