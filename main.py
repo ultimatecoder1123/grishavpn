@@ -5,7 +5,7 @@ import os
 import re
 
 # --- КОНФИГУРАЦИЯ ---
-BOT_TOKEN = 'AIzaSyDSGiFECuvVvKK5mlyhhbUmZszk2CwcIVQ'
+BOT_TOKEN = '8213302101:AAGqw1kA3nj9RLh3W2vjI2p3PlFtuLHPqVo'
 # Эту ссылку мы получим ПОСЛЕ деплоя (сохрани код, задеплой, получи ссылку и вставь сюда)
 # Пример: https://my-bot-service-uc.a.run.app
 WEBHOOK_URL = 'https://grishavpn.onrender.com' 
@@ -186,3 +186,4 @@ if __name__ == "__main__":
     # этот код для запуска на сервере через Gunicorn
 
     app.run(host="0.0.0.0", port=int(os.environ.get("PORT", 5000)))
+
