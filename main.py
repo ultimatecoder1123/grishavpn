@@ -142,7 +142,7 @@ def ask_quality(message):
 def save_quality(message):
     text = message.text
     if "Апупенный" in text:
-        q_text, q_emoji = "Премиальная", "🚀"
+        q_text, q_emoji = "Отличная", "🚀"
     elif "Средний" in text:
         q_text, q_emoji = "Средняя", "🟡"
     elif "Плохой" in text:
@@ -214,6 +214,7 @@ if __name__ == "__main__":
     # этот код для запуска на сервере через Gunicorn
 
     app.run(host="0.0.0.0", port=int(os.environ.get("PORT", 5000)))
+
 
 
 
