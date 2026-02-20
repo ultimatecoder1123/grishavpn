@@ -5,10 +5,10 @@ import os
 import re
 
 # --- КОНФИГУРАЦИЯ ---
-BOT_TOKEN = 'ТВОЙ_ТОКЕН_ЗДЕСЬ'
+BOT_TOKEN = 'AIzaSyDSGiFECuvVvKK5mlyhhbUmZszk2CwcIVQ'
 # Эту ссылку мы получим ПОСЛЕ деплоя (сохрани код, задеплой, получи ссылку и вставь сюда)
 # Пример: https://my-bot-service-uc.a.run.app
-WEBHOOK_URL = 'ССЫЛКА_ОТ_CLOUD_RUN_ИЛИ_RENDER' 
+WEBHOOK_URL = 'https://grishavpn.onrender.com' 
 
 ADMIN_ID = 7769226977
 CHANNEL_ID = -1003423217810
@@ -184,4 +184,5 @@ def finish_post(message):
 if __name__ == "__main__":
     # Локальный запуск не сработает корректно без туннеля, 
     # этот код для запуска на сервере через Gunicorn
+
     app.run(host="0.0.0.0", port=int(os.environ.get("PORT", 5000)))
